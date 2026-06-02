@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+}
+.screen {
+    padding: 20px;
+}
+#login-screen {
+    max-width: 300px;
+    margin: 100px auto;
+    background: white;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+input, button, select {
+    padding: 10px;
+    font-size: 16px;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2c3e50;
+    color: white;
+    padding: 10px 20px;
+}
+.workspace {
+    display: flex;
+    margin-top: 20px;
+    gap: 20px;
+}
+.tools {
+    width: 250px;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.canvas-container {
+    background: white;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+canvas {
+    border: 2px solid #333;
+    cursor: crosshair;
+}
