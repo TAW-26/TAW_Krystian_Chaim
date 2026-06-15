@@ -7,38 +7,140 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="login-screen" class="screen">
+<div id="login-screen" class="container">
     <h2>Logowanie</h2>
-    <input type="text" id="username" placeholder="Login (np. admin)" value="admin">
-    <input type="password" id="password" placeholder="Hasło (np. 123)" value="123">
-    <button onclick="login()">Zaloguj</button>
-    <p id="login-error" style="color: red;"></p>
+    <div class="form-group">
+        <input type="text" id="username" placeholder="Login" value="admin">
+    </div>
+    <div class="form-group">
+        <input type="password" id="password" placeholder="Hasło" value="123">
+    </div>
+    <button onclick="login()">Zaloguj się</button>
+    <p id="login-error" class="error-msg"></p>
+    <p class="toggle-link" onclick="toggleAuthForms()">Nie masz konta? Zarejestruj się</p>
 </div>
 
-<div id="editor-screen" class="screen" style="display: none;">
+<div id="register-screen" class="container" style="display: none;">
+    <h2>Rejestracja</h2>
+    <div class="form-group">
+        <input type="text" id="reg-username" placeholder="Wybierz Login">
+    </div>
+    <div class="form-group">
+        <input type="password" id="reg-password" placeholder="Wybierz Hasło">
+    </div>
+    <button onclick="register()" style="background-color: #2196F3;">Utwórz konto</button>
+    <p id="register-msg" class="error-msg"></p>
+    <p class="toggle-link" onclick="toggleAuthForms()">Masz już konto? Zaloguj się</p>
+</div>
+
+<div id="dashboard-screen" style="display: none;">
     <header>
-        <h2>2D Engine - Edytor Sceny</h2>
+        <h2>Centrum Gier 2D</h2>
         <div>
-            <button onclick="saveProject()">Zapisz Projekt (JSON)</button>
-            <button onclick="playMode()">Play Mode</button>
-            <button onclick="logout()">Wyloguj</button>
+            <span id="user-profile-display" style="margin-right: 15px; font-weight: bold; color: #4CAF50;"></span>
+            <button class="btn-logout" onclick="logout()">Wyloguj</button>
+        </div>
+    </header>
+    <div class="dashboard-container">
+        <div class="dashboard-sidebar">
+            <h3>Opcje kreatora</h3>
+            <button class="btn-new-game" onclick="startNewGameProject()">➕ Stwórz nową grę</button>
+            <div class="stats-panel">
+                <h4>Twoje studio:</h4>
+                <p>Wszystkich gier w chmurze: <span id="stat-total-games">0</span></p>
+            </div>
+        </div>
+        <div class="games-list-wrapper">
+            <h3>Dostępne projekty w bazie danych</h3>
+            <div id="games-grid" class="games-grid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="editor-screen" style="display: none;">
+    <header>
+        <h2 id="editor-title-bar">Kreator: Nowa Gra</h2>
+        <div class="header-buttons">
+            <button class="btn-back" onclick="backToDashboard()">⬅️ Powrót do menu</button>
+            <button class="btn-save" onclick="saveProject()">Zapisz w chmurze</button>
+            <button class="btn-play" id="play-btn" onclick="togglePlayMode()">Uruchom Grę</button>
         </div>
     </header>
 
     <div class="workspace">
-        <div class="tools">
-            <h3>Narzędzia</h3>
-            <label>Wybierz typ pola (Tile):</label>
-            <select id="tile-type">
-                <option value="0">Trawa (Puste)</option>
-                <option value="1">Ściana (Zderzenie)</option>
-                <option value="2">Gracz / NPC</option>
-            </select>
-            <p id="status-msg" style="color: green; margin-top: 20px;"></p>
+        <div class="sidebar">
+            <h3>Kategorie obiektów</h3>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('tab-player')">Gracz</button>
+                <button class="tab-btn" onclick="switchTab('tab-enemies')">Wrogowie</button>
+                <button class="tab-btn" onclick="switchTab('tab-walls')">Ściany</button>
+                <button class="tab-btn" onclick="switchTab('tab-decor')">Ozdoby</button>
+            </div>
+            <button class="tab-btn btn-eraser" id="btn-eraser" onclick="setEraserTool()">🧽 Gumka (Usuń element)</button>
+
+            <div id="tab-player" class="tab-content">
+                <select id="select-player" onchange="setCurrentSelection('player', this.value)" size="6">
+                    <option value="🤖" selected>🤖 Robot</option>
+                    <option value="🤠">🤠 Kowboj</option>
+                    <option value="🥷">🥷 Ninja</option>
+                    <option value="🧙">🧙 Mag</option>
+                    <option value="👽">👽 Kosmita</option>
+                    <option value="🕵️">🕵️ Detektyw</option>
+                </select>
+            </div>
+            <div id="tab-enemies" class="tab-content" style="display:none;">
+                <select id="select-enemy" onchange="setCurrentSelection('enemy', this.value)" size="6">
+                    <option value="🦇" selected>🦇 Nietoperz (Ekstremalny)</option>
+                    <option value="👾">👾 Obcy (Szybki)</option>
+                    <option value="🕷️">🕷️ Pająk (Szybki)</option>
+                    <option value="👻">👻 Duch (Normalny)</option>
+                    <option value="🦖">🦖 T-Rex (Wolny)</option>
+                    <option value="🧟">🧟 Zombie (Bardzo wolny)</option>
+                </select>
+            </div>
+            <div id="tab-walls" class="tab-content" style="display:none;">
+                <select id="select-wall" onchange="setCurrentSelection('wall', this.value)" size="6">
+                    <option value="🧱" selected>🧱 Ściana</option>
+                    <option value="🪨">🪨 Kamień</option>
+                    <option value="🌳">🌳 Drzewo</option>
+                    <option value="🌵">🌵 Kaktus</option>
+                    <option value="🛢️">🛢️ Beczka</option>
+                    <option value="🔥">🔥 Ogień</option>
+                </select>
+            </div>
+            <div id="tab-decor" class="tab-content" style="display:none;">
+                <select id="select-decor" onchange="setCurrentSelection('decor', this.value)" size="6">
+                    <option value="🪙" selected>🪙 Moneta (+1 pkt)</option>
+                    <option value="💎">💎 Diament (+1 pkt)</option>
+                    <option value="💰">💰 Złoto (+1 pkt)</option>
+                    <option value="🌻">🌻 Słonecznik</option>
+                    <option value="🍄">🍄 Grzyb</option>
+                    <option value="🌸">🌸 Kwiat</option>
+                </select>
+            </div>
+
+            <div class="selected-indicator">Narzędzie: <span id="active-tool-display">🤠</span></div>
+            <button class="btn-clear" onclick="clearCanvas()">Wyczyść planszę</button>
+            <p id="status-msg" class="success-msg"></p>
         </div>
 
-        <div class="canvas-container">
+        <div class="canvas-wrapper">
             <canvas id="game-canvas" width="400" height="400"></canvas>
+        </div>
+
+        <div class="right-sidebar">
+            <h3>Konfiguracja gry</h3>
+            <div class="form-group-right"><label>Nazwa gry:</label><input type="text" id="game-title"></div>
+            <div class="form-group-right"><label>Opis projektu:</label><textarea id="game-desc" rows="2"></textarea></div>
+            <div class="form-group-right"><label>Autor (Podpis):</label><input type="text" id="game-author" readonly></div>
+            <hr class="divider">
+            <h3>Mechanika</h3>
+            <div class="form-group-right"><label>Punkty do wygranej:</label><input type="number" id="win-score-target" value="3"></div>
+            <div class="form-group-right"><label>Mnożnik prędkości AI (%):</label><input type="number" id="ai-speed-modifier" value="100"></div>
+            <hr class="divider">
+            <h3>Wygląd</h3>
+            <div class="form-group-right"><label>Kolor tła planszy:</label><input type="color" id="bg-color" value="#1a2e1a" onchange="updateBgColor(this.value)"></div>
         </div>
     </div>
 </div>
